@@ -66,7 +66,7 @@ function MainNav() {
     <nav>
       <NavList>
         {navLinks.map(({ href, icon, label }) => (
-          <li>
+          <li key={label}>
             <StyledNavLink to={href}>
               {icon()}
               <span>{label}</span>{" "}
