@@ -30,7 +30,7 @@ const TableHeader = styled.header`
 
 function CabinTable() {
   const { data:cabins, error, isPending } = useQuery({
-    queryKey: ["cabin"],
+    queryKey: ["cabins"],
     queryFn: async () => await getCabins(),
   });
 
