@@ -57,6 +57,8 @@ function CabinRow({ cabin }) {
     image,
   } = cabin;
 
+  const handleCloseForm = () => setShowForm(false)
+
   const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
@@ -90,7 +92,7 @@ function CabinRow({ cabin }) {
           </button>
         </div>
       </TableRow>
-      {showForm && <CreateCabinForm cabinToEdit={cabin} />}
+      {showForm && <CreateCabinForm cabinToEdit={cabin} closeForm={handleCloseForm} />}
     </>
   );
 }

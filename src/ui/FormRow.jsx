@@ -1,7 +1,7 @@
 import React from "react";
 import Input from "./Input.jsx";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createCabin } from "../services/apiCabins.js";
+import { createEditCabin } from "../services/apiCabins.js";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";

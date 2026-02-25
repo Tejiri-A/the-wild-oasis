@@ -9,17 +9,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEditCabin } from "../../services/apiCabins.js";
 import toast from "react-hot-toast";
 
-function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
-  const { id: editId, ...editValues } = cabinToEdit;
-  const isEditSession = Boolean(editId);
+function CreateCabinForm() {
   const queryClient = useQueryClient();
 
-  const { register, handleSubmit, getValues, formState, reset } = useForm({
-    defaultValues: isEditSession ? editValues : {},
-  });
-  const { errors } = formState;
-
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending, reset } = useMutation({
     mutationFn: createEditCabin,
     onSuccess: () => {
       toast.success("Cabin successfully created!");
@@ -31,25 +24,11 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
     onError: (err) => toast.error(err.message),
   });
 
-  const { mutate: editCabin, isPending: isEditing } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("Cabin successfully updated!");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      closeForm();
-    },
-    onError: (err) => toast.error(err.message),
-  });
-
-  const isWorking = isPending || isEditing;
+  const { register, handleSubmit, getValues, formState } = useForm();
+  const { errors } = formState;
 
   async function onSubmit(data) {
-    const image = typeof data.image === "string" ? data.image : data.image[0];
-    if (isEditSession)
-      editCabin({ newCabinData: { ...data, image }, id: editId });
-    else mutate({ ...data, image: image });
+    mutate({...data, image: data.image[0]});
   }
 
   function onError(errors) {
@@ -121,13 +100,7 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput
-          id="image"
-          accept="image/*"
-          {...register("image", {
-            required: isEditSession ? false : "This field is required",
-          })}
-        />
+        <FileInput id="image" accept="image/*" {...register("image")} />
       </FormRow>
 
       <FormRow>
@@ -135,10 +108,8 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button disabled={isWorking} type={"submit"}>
-          {isWorking
-            ? "submitting..."
-            : `${isEditSession ? "edit cabin" : "create Cabin"}`}
+        <Button disabled={isPending} type={"submit"}>
+          {isPending ? "Adding cabin..." : "Add cabin"}
         </Button>
       </FormRow>
     </Form>
