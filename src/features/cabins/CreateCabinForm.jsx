@@ -28,7 +28,7 @@ function CreateCabinForm() {
   const { errors } = formState;
 
   async function onSubmit(data) {
-    mutate(data);
+    mutate({...data, image: data.image[0]});
   }
 
   function onError(errors) {
@@ -85,7 +85,10 @@ function CreateCabinForm() {
         />
       </FormRow>
 
-      <FormRow label="Description for website" error={errors?.description?.message}>
+      <FormRow
+        label="Description for website"
+        error={errors?.description?.message}
+      >
         <Textarea
           type="number"
           id="description"
@@ -97,7 +100,7 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo">
-        <FileInput id="image" accept="image/*" />
+        <FileInput id="image" accept="image/*" {...register("image")} />
       </FormRow>
 
       <FormRow>
@@ -106,7 +109,7 @@ function CreateCabinForm() {
           Cancel
         </Button>
         <Button disabled={isPending} type={"submit"}>
-          Add cabin
+          {isPending ? "Adding cabin..." : "Add cabin"}
         </Button>
       </FormRow>
     </Form>
