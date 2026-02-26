@@ -8,56 +8,36 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createEditCabin } from "../../services/apiCabins.js";
 import toast from "react-hot-toast";
+import { useCreateCabin, useEditCabin } from "./mutations.js";
 
 function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
+  //   Edit data and state
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
-  const queryClient = useQueryClient();
 
+  // initialize and configure react hook form
   const { register, handleSubmit, getValues, formState, reset } = useForm({
     defaultValues: isEditSession ? editValues : {},
   });
   const { errors } = formState;
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: createEditCabin,
-    onSuccess: () => {
-      toast.success("Cabin successfully created!");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (err) => toast.error(err.message),
-  });
+  // mutation hooks for creating and editing cabins
+  const { createCabin, isCreatingCabin } = useCreateCabin(reset);
+  const { editCabin, isEditing } = useEditCabin(closeForm);
 
-  const { mutate: editCabin, isPending: isEditing } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createEditCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("Cabin successfully updated!");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      closeForm();
-    },
-    onError: (err) => toast.error(err.message),
-  });
+  // pending states for both creating and editing cabins
+  const isWorking = isCreatingCabin || isEditing;
 
-  const isWorking = isPending || isEditing;
-
+  // To create or modify cabin data based in the editing state
   async function onSubmit(data) {
     const image = typeof data.image === "string" ? data.image : data.image[0];
     if (isEditSession)
       editCabin({ newCabinData: { ...data, image }, id: editId });
-    else mutate({ ...data, image: image });
-  }
-
-  function onError(errors) {
-    // console.log(errors);
+    else createCabin({ ...data, image: image });
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form onSubmit={handleSubmit(onSubmit)}>
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"

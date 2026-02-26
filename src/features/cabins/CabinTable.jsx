@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCabins } from "../../services/apiCabins.js";
 import Spinner from "../../ui/Spinner.jsx";
 import CabinRow from "./CabinRow.jsx";
+import { useCabins } from "./queries.js";
 
 const Table = styled.div`
   border: 1px solid var(--color-grey-200);
@@ -29,10 +30,7 @@ const TableHeader = styled.header`
 `;
 
 function CabinTable() {
-  const { data:cabins, error, isPending } = useQuery({
-    queryKey: ["cabins"],
-    queryFn: async () => await getCabins(),
-  });
+  const { cabins, isPending } = useCabins();
 
   if (isPending) return <Spinner />;
 
@@ -46,7 +44,9 @@ function CabinTable() {
         <div>Discount</div>
         <div></div>
       </TableHeader>
-      {cabins?.map((cabin) => (<CabinRow cabin={cabin} key={cabin.id}/>))}
+      {cabins?.map((cabin) => (
+        <CabinRow cabin={cabin} key={cabin.id} />
+      ))}
     </Table>
   );
 }
