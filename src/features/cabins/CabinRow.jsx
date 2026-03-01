@@ -98,7 +98,7 @@ function CabinRow({ cabin }) {
         </div>
       </TableRow>
       {showForm && (
-        <CreateCabinForm cabinToEdit={cabin} closeForm={handleCloseForm} />
+        <CreateCabinForm cabinToEdit={cabin} onCloseModal={handleCloseForm} />
       )}
     </>
   );

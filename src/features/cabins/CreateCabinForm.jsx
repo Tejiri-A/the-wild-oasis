@@ -5,12 +5,9 @@ import FileInput from "../../ui/FileInput";
 import Textarea from "../../ui/Textarea";
 import FormRow from "../../ui/FormRow.jsx";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createEditCabin } from "../../services/apiCabins.js";
-import toast from "react-hot-toast";
 import { useCreateCabin, useEditCabin } from "./mutations.js";
 
-function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
+function CreateCabinForm({ cabinToEdit = {}, onCloseModal }) {
   //   Edit data and state
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
@@ -23,7 +20,7 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
 
   // mutation hooks for creating and editing cabins
   const { createCabin, isCreatingCabin } = useCreateCabin(reset);
-  const { editCabin, isEditing } = useEditCabin(closeForm);
+  const { editCabin, isEditing } = useEditCabin(onCloseModal);
 
   // pending states for both creating and editing cabins
   const isWorking = isCreatingCabin || isEditing;
@@ -37,7 +34,7 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit)} type={onCloseModal ? "modal":"regular"}>
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -112,7 +109,7 @@ function CreateCabinForm({ cabinToEdit = {}, closeForm }) {
 
       <FormRow>
         {/* type is an HTML attribute! */}
-        <Button variation="secondary" type="reset">
+        <Button variation="secondary" type="reset" onClick={() => onCloseModal?.()}>
           Cancel
         </Button>
         <Button disabled={isWorking} type={"submit"}>
