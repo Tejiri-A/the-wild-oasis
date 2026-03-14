@@ -37,11 +37,11 @@ const Amount = styled.div`
 function BookingRow({
   booking: {
     id: bookingId,
-    created_at,
+    createdAt,
     startDate,
     endDate,
-    numNights,
-    numGuests,
+    numberOfNights,
+    numberOfGuests,
     totalPrice,
     status,
     guests: { fullName: guestName, email },
@@ -68,7 +68,7 @@ function BookingRow({
           {isToday(new Date(startDate))
             ? "Today"
             : formatDistanceFromNow(startDate)}{" "}
-          &rarr; {numNights} night stay
+          &rarr; {numberOfNights} night stay
         </span>
         <span>
           {format(new Date(startDate), "MMM dd yyyy")} &mdash;{" "}
