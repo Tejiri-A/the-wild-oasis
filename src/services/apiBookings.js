@@ -20,10 +20,16 @@ export async function getBooking(id) {
   return formatBooking(data);
 }
 
-export async function getBookings() {
-  const { data, error } = await supabase
+export async function getBookings({ filter, sortBy }) {
+  let query = supabase
     .from("bookings")
-    .select("*, cabins(name), guests(full_name, email)");
+    .select("*, cabins(name), guests(full_name, email)")
+
+  // FILTER
+  console.log(filter)
+  // if(filter !== null) query = query[filter.method || 'eq']( filter.field, filter.value)
+  if (filter !== null) query = query.eq(filter.field, filter.value);
+  const { data, error } = await query;
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");

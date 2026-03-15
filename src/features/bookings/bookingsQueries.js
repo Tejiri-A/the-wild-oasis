@@ -1,14 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { getBookings } from "../../services/apiBookings.js";
+import { useSearchParams } from "react-router";
 
 export function useBookings() {
+  const [searchParams] = useSearchParams();
+
+  const filterValue = searchParams.get("status");
+  // null if there is not filter value or the filter value is all (returns all data)
+  // otherwise, pass in the filter parameters
+  const filter =
+    !filterValue || filterValue === "all"
+      ? null
+      : { field: "status", value: filterValue };
+
   const {
     data: bookings,
     isPending,
     error,
   } = useQuery({
-    queryKey: ["bookings"],
-    queryFn: async() => await getBookings(),
+    queryKey: ["bookings", filter],
+    queryFn: async () => await getBookings({ filter }),
   });
   return { bookings, isPending, error };
 }
