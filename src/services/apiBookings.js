@@ -2,36 +2,7 @@ import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
 function formatBooking(booking) {
-  if (!booking) return booking;
-
-  return {
-    ...booking,
-    createdAt: booking.created_at,
-    startDate: booking.start_date,
-    endDate: booking.end_date,
-    numberOfNights: booking.number_of_nights,
-    numberOfGuests: booking.number_of_guests,
-    cabinPrice: booking.cabin_price,
-    extrasPrice: booking.extras_price,
-    totalPrice: booking.total_price,
-    hasBreakfast: booking.has_breakfast,
-    isPaid: booking.is_paid,
-
-    guests: booking.guests
-      ? {
-          ...booking.guests,
-          fullName: booking.guests.full_name,
-          nationalId: booking.guests.national_id,
-          countryFlag: booking.guests.country_flag,
-        }
-      : null,
-
-    cabins: booking.cabins
-      ? {
-          ...booking.cabins,
-        }
-      : null,
-  };
+  return booking;
 }
 
 export async function getBooking(id) {
@@ -73,12 +44,7 @@ export async function getBookingsAfterDate(date) {
     throw new Error("Bookings could not get loaded");
   }
 
-  return data.map((booking) => ({
-    ...booking,
-    createdAt: booking.created_at,
-    totalPrice: booking.total_price,
-    extrasPrice: booking.extras_price,
-  }));
+  return data;
 }
 
 // Returns all STAYS that are were created after the given date
