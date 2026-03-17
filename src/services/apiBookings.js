@@ -1,6 +1,7 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constants.js";
+import { useQueryClient } from "@tanstack/react-query";
 
 function formatBooking(booking) {
   return booking;
@@ -45,11 +46,14 @@ export async function getBookings({ filter, sortBy, page }) {
     query.range(from, to)
   }
 
+  // QUERY
   const { data, error, count } = await query;
   if (error) {
     console.error(error);
     throw new Error("Bookings could not get loaded");
   }
+
+
   return { data: data.map(formatBooking), count };
 }
 
