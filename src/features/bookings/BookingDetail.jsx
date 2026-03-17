@@ -14,6 +14,7 @@ import Spinner from "../../ui/Spinner.jsx";
 import Menus from "../../ui/Menus.jsx";
 import { HiArrowDownOnSquare } from "react-icons/hi2";
 import { useNavigate } from "react-router";
+import { useCheckOut } from "../check-in-out/checkInQueries.js";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -24,12 +25,13 @@ const HeadingGroup = styled.div`
 function BookingDetail() {
   const navigate = useNavigate();
   const { booking, isPending } = useBooking();
+  const { checkOut, isCheckingOut } = useCheckOut();
 
   const moveBack = useMoveBack();
 
   if (isPending) return <Spinner />;
 
-  const { status, id:bookingId } = booking;
+  const { status, id: bookingId } = booking;
 
   const statusToTagName = {
     unconfirmed: "blue",
@@ -51,13 +53,16 @@ function BookingDetail() {
 
       <ButtonGroup>
         {status === "unconfirmed" && (
-          <Button
-            onClick={() => navigate(`/checkin/${bookingId}`)}
-          >
+          <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
             Check in
           </Button>
         )}
-        
+        {status === "checked-in" && (
+          <Button onClick={() => checkOut(bookingId)} disabled={isCheckingOut}>
+            Check out
+          </Button>
+        )}
+
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>

@@ -31,6 +31,7 @@ function CheckinBooking() {
   const { booking, isPending: isLoadingBooking } = useBooking();
   const { settings, isPending: isLoadingSettings } = useSettings();
 
+
   useEffect(() => setConfirmPaid(booking?.is_paid ?? false), [booking]);
 
   const { checkIn, isCheckingIn } = useCheckin();

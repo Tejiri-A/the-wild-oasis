@@ -42,15 +42,21 @@ function Filter({ filterField, options }) {
 
   function handleClick(value) {
     searchParams.set(filterField, value);
+    if (searchParams.get("page")) searchParams.set("page", 1);
     setSearchParams(searchParams);
   }
 
   return (
     <StyledFilter>
       {options.map((option) => (
-        <FilterButton key={option.value} onClick={() => handleClick(option.value)} active={option.value === currentFilter}>{option.label}</FilterButton>
+        <FilterButton
+          key={option.value}
+          onClick={() => handleClick(option.value)}
+          active={option.value === currentFilter}
+        >
+          {option.label}
+        </FilterButton>
       ))}
-
     </StyledFilter>
   );
 }
