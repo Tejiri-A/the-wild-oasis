@@ -56,9 +56,10 @@ export function useBookings() {
 export function useBooking() {
   const { bookingId } = useParams();
   const { data:booking, isPending, error } = useQuery({
-    queryKey: [`booking-${bookingId}`],
+    queryKey: ["booking", bookingId],
     queryFn: () => getBooking(bookingId),
     retry: false,
   });
   return { booking, isPending, error };
 }
+

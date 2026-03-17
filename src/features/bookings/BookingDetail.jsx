@@ -15,6 +15,9 @@ import Menus from "../../ui/Menus.jsx";
 import { HiArrowDownOnSquare } from "react-icons/hi2";
 import { useNavigate } from "react-router";
 import { useCheckOut } from "../check-in-out/checkInQueries.js";
+import { useDeleteBooking } from "./bookingMutations.js";
+import Modal from "../../ui/Modal.jsx";
+import ConfirmDelete from "../../ui/ConfirmDelete.jsx";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -26,6 +29,7 @@ function BookingDetail() {
   const navigate = useNavigate();
   const { booking, isPending } = useBooking();
   const { checkOut, isCheckingOut } = useCheckOut();
+  const { removeBooking, isDeletingBooking } = useDeleteBooking();
 
   const moveBack = useMoveBack();
 
@@ -58,11 +62,30 @@ function BookingDetail() {
           </Button>
         )}
         {status === "checked-in" && (
-          <Button onClick={() => checkOut(bookingId)} disabled={isCheckingOut}>
+          <Button
+            onClick={() => checkOut(bookingId)}
+            disabled={isCheckingOut || isDeletingBooking}
+          >
             Check out
           </Button>
         )}
-
+        <Modal>
+          <Modal.Open opens={"delete"}>
+            <Button variation={"danger"} disabled={isDeletingBooking}>
+              Delete booking
+            </Button>
+          </Modal.Open>
+          <Modal.Window name={"delete"}>
+            <ConfirmDelete
+              resourceName={"booking"}
+              onConfirm={() => {
+                removeBooking(bookingId, {
+                  onSettled: () => navigate(-1),
+                });
+              }}
+            />
+          </Modal.Window>
+        </Modal>
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>
