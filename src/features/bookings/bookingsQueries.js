@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router";
-import { getBookings } from "../../services/apiBookings.js";
+import { useParams, useSearchParams } from "react-router";
+import { getBooking, getBookings } from "../../services/apiBookings.js";
 import { PAGE_SIZE } from "../../utils/constants.js";
 
 function getStatusFilter(searchParams) {
@@ -51,4 +51,14 @@ export function useBookings() {
     isPending,
     error,
   };
+}
+
+export function useBooking() {
+  const { bookingId } = useParams();
+  const { data:booking, isPending, error } = useQuery({
+    queryKey: [`booking-${bookingId}`],
+    queryFn: () => getBooking(bookingId),
+    retry: false,
+  });
+  return { booking, isPending, error };
 }

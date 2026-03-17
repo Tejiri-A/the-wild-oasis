@@ -1,7 +1,7 @@
 import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 import { PAGE_SIZE } from "../utils/constants.js";
-import { useQueryClient } from "@tanstack/react-query";
+
 
 function formatBooking(booking) {
   return booking;
@@ -28,7 +28,6 @@ export async function getBookings({ filter, sortBy, page }) {
     .select("*, cabins(name), guests(full_name, email)", { count: "exact" });
 
   // FILTER
-  console.log(filter);
   // if(filter !== null) query = query[filter.method || 'eq']( filter.field, filter.value)
   if (filter) query = query.eq(filter.field, filter.value);
 
