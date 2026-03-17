@@ -1,30 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
-import { getBookings } from "../../services/apiBookings.js";
 import { useSearchParams } from "react-router";
+import { getBookings } from "../../services/apiBookings.js";
+
+function getStatusFilter(searchParams) {
+  const status = searchParams.get("status");
+
+  if (!status || status === "all") return null;
+
+  return { field: "status", value: status };
+}
+
+function getSortBy(searchParams) {
+  const sortParam = searchParams.get("sortBy") || "start_date-desc";
+  const [field, direction] = sortParam.split("-");
+  return { field, direction };
+}
 
 export function useBookings() {
   const [searchParams] = useSearchParams();
 
-  const filterValue = searchParams.get("status");
-  // null if there is not filter value or the filter value is all (returns all data)
-  // otherwise, pass in the filter parameters
-  const filter =
-    !filterValue || filterValue === "all"
-      ? null
-      : { field: "status", value: filterValue };
+  const filter = getStatusFilter(searchParams);
+  const sortBy = getSortBy(searchParams);
 
-  // SORT
-  const sortByRaw = searchParams.get("sortBy") || "start_date-desc";
-  const [field, direction] = sortByRaw.split("-");
-  const sortBy = { field, direction };
+  const page = !searchParams.get("page") ? 1 : Number(searchParams.get("page"));
 
-  const {
-    data: bookings,
+  const { data, isPending, error } = useQuery({
+    queryKey: ["bookings", filter, sortBy, page],
+    queryFn: () => getBookings({ filter, sortBy, page }),
+  });
+
+  return {
+    bookings: data?.data ?? [],
+    count: data?.count ?? 0,
     isPending,
     error,
-  } = useQuery({
-    queryKey: ["bookings", filter, sortBy],
-    queryFn: async () => await getBookings({ filter, sortBy }),
-  });
-  return { bookings, isPending, error };
+  };
 }
